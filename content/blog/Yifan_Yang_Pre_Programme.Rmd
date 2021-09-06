@@ -1,13 +1,18 @@
 ---
-title: 'MAM 2022 Pre-programme Assignment'
-author: "Yifan Yang"
-date: "28/08/2021"
-output:
-  html_document:
-    theme: flatly
-    highlight: zenburn
-    toc: yes
-    toc_float: yes
+categories:
+- Android And Gaming
+date: "2021-09-28T10:07:47+06:00"
+description: this is meta description
+draft: false
+image: images/featured-post/post-1.jpg
+tags:
+- Photos
+- Game
+- React
+- Python
+- New
+title: How To Use Checklists To Improve Your UX
+type: featured
 ---
 
 ```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
