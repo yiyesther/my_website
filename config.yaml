@@ -11,7 +11,7 @@ outputs:
     - RSS
     - JSON
 params:
-  author: Esther
+  author: Yifan Yang
   cookies:
     enable: yes
     expire_days: 2
@@ -24,12 +24,7 @@ params:
   location: London Business School, Regent's Park, London
   logo: images/logo.png
   mobile: +44 07400989188
-  newsletter:
-    content: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
-      eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
-      At vero
-    enable: yes
-    title: Join Our Newsletter
+  
   plugins:
     css:
       - URL: plugins/bootstrap/bootstrap.min.css
@@ -53,9 +48,6 @@ params:
     - icon: ti-facebook
       link: '#'
       title: facebook
-    - icon: ti-twitter-alt
-      link: '#'
-      title: twitter
     - icon: ti-instagram
       link: 'https://www.instagram.com/esthero1t/'
       title: instagram
@@ -63,7 +55,7 @@ params:
       link: 'https://github.com/yiyesther'
       title: github
     - icon: ti-linkedin
-      link: '#'
+      link: 'https://www.linkedin.com/in/yifan-yang-87b387163'
       title: linkedin
 menu:
   footer:

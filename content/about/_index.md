@@ -7,8 +7,6 @@ title: About Me
 type: about
 ---
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
+My name is Yifan and you can also call me Esther. I am currently studying Master's in Analytics and Management at London Business School. I have completed a degree of Master of Philosophy at University of Cambridge last year, majoring in Energy Technologies. Before that, I studied for a BSc in Chemistry at University of Warwick.
 
-consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-
-nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+Having explored different areas during my study, I have both gained experience in these academic fields and realised the correlation between these industries. The fascinating impact they can place on each other has deeply attracted me no matter as a science, engineering or business student. As a result, I decided to pursue a role in consulting on energy sector. This job will enable me to apply my knowledge and understanding in chemistry and energy to better assist customers in these fields.

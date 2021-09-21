@@ -1,0 +1,880 @@
+---
+categories:
+- AM01 Applied Statistics Homework
+date: "2021-09-13T10:07:47+06:00"
+description: this is meta description
+draft: false
+image: images/post/post-3.jpeg
+tags:
+- R Markdown
+- plot
+- Regression
+title: Homework 3
+type: post
+---
+
+<script src="/liva/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<div id="youth-risk-behavior-surveillance" class="section level1">
+<h1>Youth Risk Behavior Surveillance</h1>
+<div id="load-the-data" class="section level2">
+<h2>Load the data</h2>
+<p>First, we will examine the dataset.</p>
+<pre class="r"><code>glimpse(yrbss)</code></pre>
+<pre><code>## Rows: 13,583
+## Columns: 13
+## $ age                      &lt;int&gt; 14, 14, 15, 15, 15, 15, 15, 14, 15, 15, 15, 1…
+## $ gender                   &lt;chr&gt; &quot;female&quot;, &quot;female&quot;, &quot;female&quot;, &quot;female&quot;, &quot;fema…
+## $ grade                    &lt;chr&gt; &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, …
+## $ hispanic                 &lt;chr&gt; &quot;not&quot;, &quot;not&quot;, &quot;hispanic&quot;, &quot;not&quot;, &quot;not&quot;, &quot;not&quot;…
+## $ race                     &lt;chr&gt; &quot;Black or African American&quot;, &quot;Black or Africa…
+## $ height                   &lt;dbl&gt; NA, NA, 1.73, 1.60, 1.50, 1.57, 1.65, 1.88, 1…
+## $ weight                   &lt;dbl&gt; NA, NA, 84.4, 55.8, 46.7, 67.1, 131.5, 71.2, …
+## $ helmet_12m               &lt;chr&gt; &quot;never&quot;, &quot;never&quot;, &quot;never&quot;, &quot;never&quot;, &quot;did not …
+## $ text_while_driving_30d   &lt;chr&gt; &quot;0&quot;, NA, &quot;30&quot;, &quot;0&quot;, &quot;did not drive&quot;, &quot;did not…
+## $ physically_active_7d     &lt;int&gt; 4, 2, 7, 0, 2, 1, 4, 4, 5, 0, 0, 0, 4, 7, 7, …
+## $ hours_tv_per_school_day  &lt;chr&gt; &quot;5+&quot;, &quot;5+&quot;, &quot;5+&quot;, &quot;2&quot;, &quot;3&quot;, &quot;5+&quot;, &quot;5+&quot;, &quot;5+&quot;,…
+## $ strength_training_7d     &lt;int&gt; 0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 3, 0, 0, 7, 7, …
+## $ school_night_hours_sleep &lt;chr&gt; &quot;8&quot;, &quot;6&quot;, &quot;&lt;5&quot;, &quot;6&quot;, &quot;9&quot;, &quot;8&quot;, &quot;9&quot;, &quot;6&quot;, &quot;&lt;5&quot;…</code></pre>
+<pre class="r"><code>skimr::skim(yrbss)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-2">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">yrbss</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">13583</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">13</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">8</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">5</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">gender</td>
+<td align="right">12</td>
+<td align="right">1.00</td>
+<td align="right">4</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">grade</td>
+<td align="right">79</td>
+<td align="right">0.99</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">hispanic</td>
+<td align="right">231</td>
+<td align="right">0.98</td>
+<td align="right">3</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">race</td>
+<td align="right">2805</td>
+<td align="right">0.79</td>
+<td align="right">5</td>
+<td align="right">41</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">helmet_12m</td>
+<td align="right">311</td>
+<td align="right">0.98</td>
+<td align="right">5</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">text_while_driving_30d</td>
+<td align="right">918</td>
+<td align="right">0.93</td>
+<td align="right">1</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">hours_tv_per_school_day</td>
+<td align="right">338</td>
+<td align="right">0.98</td>
+<td align="right">1</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">school_night_hours_sleep</td>
+<td align="right">1248</td>
+<td align="right">0.91</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">age</td>
+<td align="right">77</td>
+<td align="right">0.99</td>
+<td align="right">16.16</td>
+<td align="right">1.26</td>
+<td align="right">12.00</td>
+<td align="right">15.0</td>
+<td align="right">16.00</td>
+<td align="right">17.00</td>
+<td align="right">18.00</td>
+<td align="left">▁▂▅▅▇</td>
+</tr>
+<tr class="even">
+<td align="left">height</td>
+<td align="right">1004</td>
+<td align="right">0.93</td>
+<td align="right">1.69</td>
+<td align="right">0.10</td>
+<td align="right">1.27</td>
+<td align="right">1.6</td>
+<td align="right">1.68</td>
+<td align="right">1.78</td>
+<td align="right">2.11</td>
+<td align="left">▁▅▇▃▁</td>
+</tr>
+<tr class="odd">
+<td align="left">weight</td>
+<td align="right">1004</td>
+<td align="right">0.93</td>
+<td align="right">67.91</td>
+<td align="right">16.90</td>
+<td align="right">29.94</td>
+<td align="right">56.2</td>
+<td align="right">64.41</td>
+<td align="right">76.20</td>
+<td align="right">180.99</td>
+<td align="left">▆▇▂▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">physically_active_7d</td>
+<td align="right">273</td>
+<td align="right">0.98</td>
+<td align="right">3.90</td>
+<td align="right">2.56</td>
+<td align="right">0.00</td>
+<td align="right">2.0</td>
+<td align="right">4.00</td>
+<td align="right">7.00</td>
+<td align="right">7.00</td>
+<td align="left">▆▂▅▃▇</td>
+</tr>
+<tr class="odd">
+<td align="left">strength_training_7d</td>
+<td align="right">1176</td>
+<td align="right">0.91</td>
+<td align="right">2.95</td>
+<td align="right">2.58</td>
+<td align="right">0.00</td>
+<td align="right">0.0</td>
+<td align="right">3.00</td>
+<td align="right">5.00</td>
+<td align="right">7.00</td>
+<td align="left">▇▂▅▂▅</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="exploratory-data-analysis" class="section level2">
+<h2>Exploratory Data Analysis</h2>
+<p>From the glimpse function used in the chunk above, we can see there are 1004 missing values from the weight category.</p>
+<pre class="r"><code>yrbss %&gt;% 
+  ggplot(aes(x=weight)) +
+  geom_histogram(height = 0.5) +
+  labs(title = &quot;Weight distribution&quot;, y=&quot;Count&quot;, x=&quot;Weight (kg)&quot; )+
+  NULL</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/unnamed-chunk-3-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>favstats(~weight, data=yrbss)</code></pre>
+<pre><code>##   min   Q1 median   Q3 max mean   sd     n missing
+##  29.9 56.2   64.4 76.2 181 67.9 16.9 12579    1004</code></pre>
+<p>Next, consider the possible relationship between a high schooler’s weight and their physical activity.</p>
+<p>Let’s create a new variable in the dataframe <code>yrbss</code>, called <code>physical_3plus</code> , which will be <code>yes</code> if they are physically active for at least 3 days a week, and <code>no</code> otherwise.</p>
+<pre class="r"><code>#reuse code from snap_insta
+yrbss_new &lt;- yrbss %&gt;% 
+  mutate(physical_3plus = ifelse(physically_active_7d &gt;=3, &#39;yes&#39;,
+                                    &#39;no&#39;))
+
+glimpse(yrbss_new)</code></pre>
+<pre><code>## Rows: 13,583
+## Columns: 14
+## $ age                      &lt;int&gt; 14, 14, 15, 15, 15, 15, 15, 14, 15, 15, 15, 1…
+## $ gender                   &lt;chr&gt; &quot;female&quot;, &quot;female&quot;, &quot;female&quot;, &quot;female&quot;, &quot;fema…
+## $ grade                    &lt;chr&gt; &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, …
+## $ hispanic                 &lt;chr&gt; &quot;not&quot;, &quot;not&quot;, &quot;hispanic&quot;, &quot;not&quot;, &quot;not&quot;, &quot;not&quot;…
+## $ race                     &lt;chr&gt; &quot;Black or African American&quot;, &quot;Black or Africa…
+## $ height                   &lt;dbl&gt; NA, NA, 1.73, 1.60, 1.50, 1.57, 1.65, 1.88, 1…
+## $ weight                   &lt;dbl&gt; NA, NA, 84.4, 55.8, 46.7, 67.1, 131.5, 71.2, …
+## $ helmet_12m               &lt;chr&gt; &quot;never&quot;, &quot;never&quot;, &quot;never&quot;, &quot;never&quot;, &quot;did not …
+## $ text_while_driving_30d   &lt;chr&gt; &quot;0&quot;, NA, &quot;30&quot;, &quot;0&quot;, &quot;did not drive&quot;, &quot;did not…
+## $ physically_active_7d     &lt;int&gt; 4, 2, 7, 0, 2, 1, 4, 4, 5, 0, 0, 0, 4, 7, 7, …
+## $ hours_tv_per_school_day  &lt;chr&gt; &quot;5+&quot;, &quot;5+&quot;, &quot;5+&quot;, &quot;2&quot;, &quot;3&quot;, &quot;5+&quot;, &quot;5+&quot;, &quot;5+&quot;,…
+## $ strength_training_7d     &lt;int&gt; 0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 3, 0, 0, 7, 7, …
+## $ school_night_hours_sleep &lt;chr&gt; &quot;8&quot;, &quot;6&quot;, &quot;&lt;5&quot;, &quot;6&quot;, &quot;9&quot;, &quot;8&quot;, &quot;9&quot;, &quot;6&quot;, &quot;&lt;5&quot;…
+## $ physical_3plus           &lt;chr&gt; &quot;yes&quot;, &quot;no&quot;, &quot;yes&quot;, &quot;no&quot;, &quot;no&quot;, &quot;no&quot;, &quot;yes&quot;, …</code></pre>
+<pre class="r"><code>yrbss_prop &lt;- yrbss_new %&gt;%
+  filter(!is.na(physical_3plus)) %&gt;% 
+  group_by(physical_3plus) %&gt;% 
+  summarise(count = n()) %&gt;% 
+  mutate(prop=count/sum(count))
+  
+glimpse(yrbss_prop)</code></pre>
+<pre><code>## Rows: 2
+## Columns: 3
+## $ physical_3plus &lt;chr&gt; &quot;no&quot;, &quot;yes&quot;
+## $ count          &lt;int&gt; 4404, 8906
+## $ prop           &lt;dbl&gt; 0.331, 0.669</code></pre>
+<p>Provide a 95% confidence interval for the population proportion of high schools that are <em>NOT</em> active 3 or more days per week</p>
+<pre class="r"><code>ci_yrbss_prop &lt;- yrbss_new %&gt;% 
+  group_by(physical_3plus) %&gt;% 
+  filter(!is.na(physical_3plus)) %&gt;% 
+  summarise(mean_weight = mean(weight, na.rm = TRUE),
+            sd_weight = sd(weight, na.rm = TRUE),
+            count_weight = n(),
+            se_weight = sd_weight / sqrt(count_weight),
+            ci_weight_up = mean_weight + qt(.975, count_weight-1)*se_weight ,
+            ci_weight_dw = mean_weight - qt(.975, count_weight-1)*se_weight 
+            )  
+
+ci_yrbss_prop</code></pre>
+<pre><code>## # A tibble: 2 × 7
+##   physical_3plus mean_weight sd_weight count_weight se_weight ci_weight_up
+##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;        &lt;int&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+## 1 no                    66.7      17.6         4404     0.266         67.2
+## 2 yes                   68.4      16.5         8906     0.175         68.8
+## # … with 1 more variable: ci_weight_dw &lt;dbl&gt;</code></pre>
+<p>Make a boxplot of <code>physical_3plus</code> vs. <code>weight</code>.</p>
+<pre class="r"><code>yrbss_new %&gt;% 
+  filter(!is.na(physical_3plus)) %&gt;% 
+  ggplot(aes(x = physical_3plus, y = weight)) +
+  geom_boxplot()+
+  labs(title = &#39;Relationship between weight and excercising more than 3 times a week&#39;, x = &#39;Count of physical_3plus&#39;, y = &#39;Weight&#39; )+
+  NULL</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/boxplot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<ul>
+<li>We would expect the kids which are physically active for 3 or more hours a week to weigh less on average than those who exercise less. This is the result we expect because as they are more physically active they consume more calories and so should weigh less. It appears that kids who do exercise tend to weigh more, the opposite of our prediction.
+There is an observed difference of about 1.77kg (68.44 - 66.67), and we notice that the two confidence intervals do not overlap. It seems that the difference is at least 95% statistically significant.</li>
+</ul>
+</div>
+<div id="confidence-interval" class="section level2">
+<h2>Confidence Interval</h2>
+<pre class="r"><code>ci_using_formulas &lt;- yrbss_new %&gt;%
+  group_by(physical_3plus) %&gt;% 
+  filter(!is.na(physical_3plus)) %&gt;% 
+  summarise(mean_weight = mean(weight, na.rm = T),
+            median_weight = median(weight, na.rm = T),
+            sd_weight = sd(weight, na.rm = T),
+            count = n(),
+            # get t-critical value with (n-1) degrees of freedom
+            t_critical = qt(0.975, count-1),
+            se_weight = sd_weight/sqrt(count),
+            margin_of_error = t_critical * se_weight,
+            weight_low = mean_weight - margin_of_error,
+            weight_high = mean_weight + margin_of_error
+  ) %&gt;% 
+  arrange(desc(mean_weight))
+
+ci_using_formulas</code></pre>
+<pre><code>## # A tibble: 2 × 10
+##   physical_3plus mean_weight median_weight sd_weight count t_critical se_weight
+##   &lt;chr&gt;                &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+## 1 yes                   68.4          65.8      16.5  8906       1.96     0.175
+## 2 no                    66.7          62.6      17.6  4404       1.96     0.266
+## # … with 3 more variables: margin_of_error &lt;dbl&gt;, weight_low &lt;dbl&gt;,
+## #   weight_high &lt;dbl&gt;</code></pre>
+</div>
+<div id="hypothesis-test-with-formula" class="section level2">
+<h2>Hypothesis test with formula</h2>
+<p><span class="math inline">\(H _0: \overline{x}_1 - \overline{x}_2 = 0\ vs.\ H_1: \overline{x}_1-\overline{x}_2 \neq 0\)</span></p>
+<pre class="r"><code>t.test(weight ~ physical_3plus, data = yrbss_new)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  weight by physical_3plus
+## t = -5, df = 7479, p-value = 9e-08
+## alternative hypothesis: true difference in means between group no and group yes is not equal to 0
+## 95 percent confidence interval:
+##  -2.42 -1.12
+## sample estimates:
+##  mean in group no mean in group yes 
+##              66.7              68.4</code></pre>
+</div>
+<div id="hypothesis-test-with-infer" class="section level2">
+<h2>Hypothesis test with <code>infer</code></h2>
+<pre class="r"><code>obs_diff &lt;- yrbss_new %&gt;%
+  specify(weight ~ physical_3plus) %&gt;%
+  calculate(stat = &quot;diff in means&quot;, order = c(&quot;yes&quot;, &quot;no&quot;))
+
+obs_diff</code></pre>
+<pre><code>## Response: weight (numeric)
+## Explanatory: physical_3plus (factor)
+## # A tibble: 1 × 1
+##    stat
+##   &lt;dbl&gt;
+## 1  1.77</code></pre>
+<pre class="r"><code>null_dist &lt;- yrbss_new %&gt;%
+  # specify variables
+  specify(weight ~ physical_3plus) %&gt;%
+  
+  # assume independence, i.e, there is no difference
+  hypothesize(null = &quot;independence&quot;) %&gt;%
+  
+  # generate 1000 reps, of type &quot;permute&quot;
+  generate(reps = 1000, type = &quot;permute&quot;) %&gt;%
+  
+  # calculate statistic of difference, namely &quot;diff in means&quot;
+  calculate(stat = &quot;diff in means&quot;, order = c(&quot;yes&quot;, &quot;no&quot;))
+
+null_dist</code></pre>
+<pre><code>## Response: weight (numeric)
+## Explanatory: physical_3plus (factor)
+## Null Hypothesis: independence
+## # A tibble: 1,000 × 2
+##    replicate    stat
+##        &lt;int&gt;   &lt;dbl&gt;
+##  1         1 -0.573 
+##  2         2 -0.0306
+##  3         3 -0.0364
+##  4         4  0.223 
+##  5         5  0.117 
+##  6         6 -0.0646
+##  7         7  0.181 
+##  8         8  0.126 
+##  9         9 -0.424 
+## 10        10  0.457 
+## # … with 990 more rows</code></pre>
+<p>We can visualize this null distribution with the following code:</p>
+<pre class="r"><code>ggplot(data = null_dist, aes(x = stat)) +
+  geom_histogram()+
+  labs(title = &quot;Distribution for the null hypothesis&quot;, x = &quot;Stat&quot;,y = &quot;Count&quot;)+
+  NULL</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/unnamed-chunk-6-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>To see how many of these null permutations have a difference of at least <code>obs_stat</code> of 1.77</p>
+<pre class="r"><code>obs_stat &lt;- obs_diff %&gt;% 
+  pull() %&gt;% 
+  round(2)
+
+obs_stat</code></pre>
+<pre><code>## [1] 1.77</code></pre>
+<p>We can also calculate the p-value for your hypothesis test using the function <code>infer::get_p_value()</code>.</p>
+<pre class="r"><code>null_dist %&gt;% visualize() +
+  shade_p_value(obs_stat = obs_diff, direction = &quot;two-sided&quot;)</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/unnamed-chunk-8-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>null_dist %&gt;%
+  get_p_value(obs_stat = obs_diff, direction = &quot;two_sided&quot;)</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   p_value
+##     &lt;dbl&gt;
+## 1       0</code></pre>
+<p>This the standard workflow for performing hypothesis tests.</p>
+</div>
+</div>
+<div id="imdb-ratings-differences-between-directors" class="section level1">
+<h1>IMDB ratings: Differences between directors</h1>
+<p><span class="math inline">\(H_0: \mu_A - \mu_B = 0\)</span>
+<span class="math inline">\(H_1 : \mu_A - \mu_B \neq 0\)</span></p>
+<ul>
+<li>t-stat is equal to 3 and p-value is equal to 0.01. Therefore, we can reject the null hypothesis. Therefore, we can conclude that we are 95% confident that movies of Stephen Spielberg have higher average ratings than those of Tim Burton.</li>
+</ul>
+<p>Load the data and examine its structure</p>
+<pre class="r"><code>movies &lt;- read_csv(here::here(&quot;data1&quot;, &quot;movies.csv&quot;))
+glimpse(movies)</code></pre>
+<pre><code>## Rows: 2,961
+## Columns: 11
+## $ title               &lt;chr&gt; &quot;Avatar&quot;, &quot;Titanic&quot;, &quot;Jurassic World&quot;, &quot;The Avenge…
+## $ genre               &lt;chr&gt; &quot;Action&quot;, &quot;Drama&quot;, &quot;Action&quot;, &quot;Action&quot;, &quot;Action&quot;, &quot;…
+## $ director            &lt;chr&gt; &quot;James Cameron&quot;, &quot;James Cameron&quot;, &quot;Colin Trevorrow…
+## $ year                &lt;dbl&gt; 2009, 1997, 2015, 2012, 2008, 1999, 1977, 2015, 20…
+## $ duration            &lt;dbl&gt; 178, 194, 124, 173, 152, 136, 125, 141, 164, 93, 1…
+## $ gross               &lt;dbl&gt; 7.61e+08, 6.59e+08, 6.52e+08, 6.23e+08, 5.33e+08, …
+## $ budget              &lt;dbl&gt; 2.37e+08, 2.00e+08, 1.50e+08, 2.20e+08, 1.85e+08, …
+## $ cast_facebook_likes &lt;dbl&gt; 4834, 45223, 8458, 87697, 57802, 37723, 13485, 920…
+## $ votes               &lt;dbl&gt; 886204, 793059, 418214, 995415, 1676169, 534658, 9…
+## $ reviews             &lt;dbl&gt; 3777, 2843, 1934, 2425, 5312, 3917, 1752, 1752, 35…
+## $ rating              &lt;dbl&gt; 7.9, 7.7, 7.0, 8.1, 9.0, 6.5, 8.7, 7.5, 8.5, 7.2, …</code></pre>
+<pre class="r"><code>#calculate the week4 and week5 confidence intervals
+rating_comparison &lt;- movies %&gt;% 
+  filter(director==&quot;Steven Spielberg&quot; | director==&quot;Tim Burton&quot;) %&gt;% 
+  group_by(director) %&gt;% 
+  summarise(avg_rating = mean(rating),
+            sd_rating = sd(rating, na.rm=TRUE),
+            count_rating = n(),
+            se_rating = sd_rating / sqrt(count_rating),
+            ci_rating_up = avg_rating + qt(.975, count_rating-1)*se_rating,
+            ci_rating_dw = avg_rating - qt(.975, count_rating-1)*se_rating
+            )
+
+#plot the confidence intervals
+rating_comparison %&gt;% 
+  ggplot(aes(x=avg_rating, y=director, color=director))+
+    geom_rect(fill=&quot;grey&quot;,alpha=0.5, color = &quot;grey&quot;,
+            aes(xmin=max(ci_rating_dw),
+                xmax=min(ci_rating_up),
+                ymin=-Inf,
+                ymax=Inf))+
+  geom_errorbarh(aes(xmin=ci_rating_dw,xmax=ci_rating_up))+
+  geom_point(aes(x=avg_rating, y=director), size=3)+
+  geom_text(aes(label=round(avg_rating, digits=2)), vjust = -1.5)+
+  labs(title=&quot;Do Spielberg and Burton have the same mean IMDB ratings?&quot;,
+       subtitle = &quot;95% confidence intervals overlap&quot;,
+       x = &quot;Mean IMDB Rating&quot;)</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/unnamed-chunk-9-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#calculate via t-test
+comparison_rating &lt;- movies %&gt;% 
+  filter(director==&quot;Steven Spielberg&quot; | director==&quot;Tim Burton&quot;)
+
+t.test(rating ~ director, data = comparison_rating)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  rating by director
+## t = 3, df = 31, p-value = 0.01
+## alternative hypothesis: true difference in means between group Steven Spielberg and group Tim Burton is not equal to 0
+## 95 percent confidence interval:
+##  0.16 1.13
+## sample estimates:
+## mean in group Steven Spielberg       mean in group Tim Burton 
+##                           7.57                           6.93</code></pre>
+<pre class="r"><code>#calculate using infer package
+set.seed(1234)
+ratings_in_null &lt;- comparison_rating %&gt;% 
+  
+  specify(rating ~ director) %&gt;% 
+  
+  hypothesise(null=&quot;independence&quot;) %&gt;% 
+  
+  generate(reps = 100, type = &quot;permute&quot;) %&gt;%
+  
+  calculate(stat = &quot;diff in means&quot;, order = c(&quot;Tim Burton&quot;,
+                                              &quot;Steven Spielberg&quot;))
+
+#calculate the observed difference
+observed_difference &lt;- comparison_rating %&gt;%
+  specify(rating ~ director) %&gt;%
+  calculate(stat = &quot;diff in means&quot;)
+
+#calculate the p-value of the differences
+ratings_in_null %&gt;% 
+  get_pvalue(obs_stat=observed_difference, direction=&quot;both&quot;)</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   p_value
+##     &lt;dbl&gt;
+## 1    0.02</code></pre>
+</div>
+<div id="omega-group-plc--pay-discrimination" class="section level1">
+<h1>Omega Group plc- Pay Discrimination</h1>
+<div id="loading-the-data" class="section level2">
+<h2>Loading the data</h2>
+<pre class="r"><code>omega &lt;- read_csv(here::here(&quot;data1&quot;, &quot;omega.csv&quot;))
+glimpse(omega) # examine the data frame</code></pre>
+<pre><code>## Rows: 50
+## Columns: 3
+## $ salary     &lt;dbl&gt; 81894, 69517, 68589, 74881, 65598, 76840, 78800, 70033, 635…
+## $ gender     &lt;chr&gt; &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;ma…
+## $ experience &lt;dbl&gt; 16, 25, 15, 33, 16, 19, 32, 34, 1, 44, 7, 14, 33, 19, 24, 3…</code></pre>
+</div>
+<div id="relationship-salary---gender" class="section level2">
+<h2>Relationship Salary - Gender ?</h2>
+<pre class="r"><code># Summary Statistics of salary by gender
+mosaic::favstats (salary ~ gender, data=omega)</code></pre>
+<pre><code>##   gender   min    Q1 median    Q3   max  mean   sd  n missing
+## 1 female 47033 60338  64618 70033 78800 64543 7567 26       0
+## 2   male 54768 68331  74675 78568 84576 73239 7463 24       0</code></pre>
+<pre class="r"><code># Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
+# the t-critical value, the standard error, the margin of error, 
+# and the low/high endpoints of a 95% condifence interval
+
+salary_gender &lt;- omega %&gt;% 
+  group_by(gender) %&gt;% 
+  summarise (mean = mean(salary), SD = sd(salary), sample_size = n()) %&gt;% 
+  mutate(se = sqrt(SD^2/sample_size), t_value = qt(p=.05/2, df=sample_size-1, lower.tail=FALSE),
+         margin_of_error = t_value*se, salary_low = mean-t_value*se, salary_high = mean+t_value*se)
+
+salary_gender</code></pre>
+<pre><code>## # A tibble: 2 × 9
+##   gender   mean    SD sample_size    se t_value margin_of_error salary_low
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;       &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt;           &lt;dbl&gt;      &lt;dbl&gt;
+## 1 female 64543. 7567.          26 1484.    2.06           3056.     61486.
+## 2 male   73239. 7463.          24 1523.    2.07           3151.     70088.
+## # … with 1 more variable: salary_high &lt;dbl&gt;</code></pre>
+<ul>
+<li>The 95% confidence interval for female is from 61486 to 67599, while that for male is from 70088 to 76490. Since their confidence intervals do not have any overlap, it can be concluded that the null hypothesis can be rejected. There is a significant difference in the mean of salary for female and male.</li>
+</ul>
+<p>Run a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money.</p>
+<pre class="r"><code># hypothesis testing using t.test() 
+t.test(salary ~ gender, data = omega)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  salary by gender
+## t = -4, df = 48, p-value = 2e-04
+## alternative hypothesis: true difference in means between group female and group male is not equal to 0
+## 95 percent confidence interval:
+##  -12973  -4420
+## sample estimates:
+## mean in group female   mean in group male 
+##                64543                73239</code></pre>
+<pre class="r"><code># hypothesis testing using infer package
+set.seed(1234)
+
+salary_gender_boot &lt;- omega %&gt;% 
+  # Specify the variable of interest &quot;salary&quot; and group by gender
+  specify(salary ~ gender) %&gt;% 
+  
+  # Hypothesize a null of no (or zero) difference
+  hypothesize (null = &quot;independence&quot;) %&gt;% 
+  
+  # Generate a bunch of simualted samples
+  generate (reps = 1000, type = &quot;permute&quot;) %&gt;% 
+  
+  # Find the mean diffference of each sample
+  calculate(stat = &quot;diff in means&quot;,
+            order = c(&quot;female&quot;, &quot;male&quot;))
+
+
+# Select the low and high endpoint from the formula-calculated CIs
+formula_ci &lt;- salary_gender %&gt;%
+  select(salary_low,salary_high)
+
+# Generate 95% percentile of the difference in the two genders&#39; salaries from the bootstrap data
+percentile_ci &lt;- salary_gender_boot %&gt;% 
+  get_confidence_interval(level = 0.95, type = &quot;percentile&quot;)
+
+percentile_ci</code></pre>
+<pre><code>## # A tibble: 1 × 2
+##   lower_ci upper_ci
+##      &lt;dbl&gt;    &lt;dbl&gt;
+## 1   -4829.    5025.</code></pre>
+<pre class="r"><code>observed_difference &lt;- salary_gender$mean[1]-salary_gender$mean[2]
+
+visualize(salary_gender_boot) + 
+  annotate(&quot;rect&quot;, xmin=-Inf, xmax=observed_difference, ymin=0, ymax=Inf, alpha=0.3, fill = &quot;pink&quot;) +
+  annotate(&quot;rect&quot;, xmin=-observed_difference, xmax=Inf, ymin=0, ymax=Inf, alpha=0.3, fill  = &quot;pink&quot;) +
+  #shade_ci(endpoints = percentile_ci,fill = &quot;khaki&quot;)+
+  labs(title=&#39;Differences in Female and Male Mean Salary in a world where there is no difference&#39;, 
+       subtitle = &quot;Observed difference marked in red&quot;,
+       x = &quot;Mean (female salary - male salary)&quot;, y = &quot;Count&quot;)+
+  geom_vline(xintercept = observed_difference, colour = &quot;red&quot;, linetype=&quot;solid&quot;, size=1.2)+
+  theme_bw()+
+  NULL</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/hypothesis_testing-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>salary_gender_boot %&gt;% 
+  get_pvalue(obs_stat = observed_difference, direction = &quot;both&quot;)</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   p_value
+##     &lt;dbl&gt;
+## 1       0</code></pre>
+<ul>
+<li>With bootstrap, the confidence interval for the difference in the two genders’ salary is constructed, while in the null world. As a result, this CI does not include the observed difference in real world, which means that the null hypothesis should be rejected. There is a significant difference in the two genders’ salaries.</li>
+</ul>
+</div>
+<div id="relationship-experience---gender" class="section level2">
+<h2>Relationship Experience - Gender?</h2>
+<pre class="r"><code># Summary Statistics of salary by gender
+favstats (experience ~ gender, data=omega)</code></pre>
+<pre><code>##   gender min    Q1 median   Q3 max  mean    sd  n missing
+## 1 female   0  0.25    3.0 14.0  29  7.38  8.51 26       0
+## 2   male   1 15.75   19.5 31.2  44 21.12 10.92 24       0</code></pre>
+<pre class="r"><code>t.test(experience ~ gender, data = omega)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  experience by gender
+## t = -5, df = 43, p-value = 1e-05
+## alternative hypothesis: true difference in means between group female and group male is not equal to 0
+## 95 percent confidence interval:
+##  -19.35  -8.13
+## sample estimates:
+## mean in group female   mean in group male 
+##                 7.38                21.12</code></pre>
+<ul>
+<li>The t-stat value is -5, which has a larger absolute value than 1.96, indicating that there is a significant difference in the two genders’ experience.</li>
+</ul>
+</div>
+<div id="relationship-salary---experience" class="section level2">
+<h2>Relationship Salary - Experience ?</h2>
+<pre class="r"><code>salary_exp &lt;- omega %&gt;% 
+  ggplot(aes(x = experience, y = salary))+
+  geom_point()+
+  labs(title = &quot;Relationship between salary and number of years of experience&quot;, x = &quot;Year(s) of experience&quot;,y = &quot;Salary&quot;)+
+  theme_bw()+
+  NULL
+
+salary_exp</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/salary_exp_scatter-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="check-correlations-between-the-data" class="section level2">
+<h2>Check correlations between the data</h2>
+<pre class="r"><code>omega %&gt;% 
+  select(gender, experience, salary) %&gt;% #order variables they will appear in ggpairs()
+  ggpairs(aes(colour=gender, alpha = 0.3))+
+  theme_bw()</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/ggpairs-1.png" width="648" style="display: block; margin: auto;" /></p>
+<ul>
+<li>Generally, the distribution of years of experience for male is more widely distributed than female in the scatter plot. There is also more female than male at 0 year of experience, and there is no female with more than 30 years of experience. Overall, there is a positive relation between experience and salary. It can be seen in the gender - experience box plot that male has a higher mean value for years of experience than female, and in the gender - salary box plot male also has a higher mean salary, which is predicted. However, the difference in mean salary is smaller than that in mean experience. This indicate that salary is less likely to be dependent on gender. Moreover, gender has even narrowed the gap between the difference in the two genders’ experience. While there is no female within the 95% CI that has a higher experience level than male in their 95% CI, the CI for salaries do overlap.</li>
+</ul>
+</div>
+</div>
+<div id="challenge-2-brexit-plot" class="section level1">
+<h1>Challenge 2: Brexit plot</h1>
+<pre class="r"><code>#Import the csv file
+
+brexit &lt;- read_csv(here::here(&quot;data1&quot;, &quot;brexit_results.csv&quot;))
+glimpse(brexit) # examine the data frame</code></pre>
+<pre><code>## Rows: 632
+## Columns: 11
+## $ Seat        &lt;chr&gt; &quot;Aldershot&quot;, &quot;Aldridge-Brownhills&quot;, &quot;Altrincham and Sale W…
+## $ con_2015    &lt;dbl&gt; 50.6, 52.0, 53.0, 44.0, 60.8, 22.4, 52.5, 22.1, 50.7, 53.0…
+## $ lab_2015    &lt;dbl&gt; 18.3, 22.4, 26.7, 34.8, 11.2, 41.0, 18.4, 49.8, 15.1, 21.3…
+## $ ld_2015     &lt;dbl&gt; 8.82, 3.37, 8.38, 2.98, 7.19, 14.83, 5.98, 2.42, 10.62, 5.…
+## $ ukip_2015   &lt;dbl&gt; 17.87, 19.62, 8.01, 15.89, 14.44, 21.41, 18.82, 21.76, 19.…
+## $ leave_share &lt;dbl&gt; 57.9, 67.8, 38.6, 65.3, 49.7, 70.5, 59.9, 61.8, 51.8, 50.3…
+## $ born_in_uk  &lt;dbl&gt; 83.1, 96.1, 90.5, 97.3, 93.3, 97.0, 90.5, 90.7, 87.0, 88.8…
+## $ male        &lt;dbl&gt; 49.9, 48.9, 48.9, 49.2, 48.0, 49.2, 48.5, 49.2, 49.5, 49.5…
+## $ unemployed  &lt;dbl&gt; 3.64, 4.55, 3.04, 4.26, 2.47, 4.74, 3.69, 5.11, 3.39, 2.93…
+## $ degree      &lt;dbl&gt; 13.87, 9.97, 28.60, 9.34, 18.78, 6.09, 13.12, 7.90, 17.80,…
+## $ age_18to24  &lt;dbl&gt; 9.41, 7.33, 6.44, 7.75, 5.73, 8.21, 7.82, 8.94, 7.56, 7.61…</code></pre>
+<pre class="r"><code>temp_brexit &lt;- brexit %&gt;% 
+  select(con_2015, lab_2015, ld_2015, ukip_2015, leave_share) %&gt;% 
+  pivot_longer(cols = 1:4, names_to = &quot;party&quot;, values_to = &quot;party_percentage&quot;)
+
+cols &lt;- c(&quot;con_2015&quot; = &quot;#0087dc&quot;, &quot;lab_2015&quot; = &quot;#d50000&quot;, &quot;ld_2015&quot; = &quot;#FDBB30&quot;, &quot;ukip_2015&quot; = &quot;#EFE600&quot;)
+
+temp_brexit %&gt;% 
+  ggplot(aes(x=party_percentage,y=leave_share, group=party, color=party)) +
+  geom_point(alpha = 0.5)+
+  geom_smooth(method=lm, size = 0.5)+
+  labs(title = &quot;How political affiliation translated to Brexit Voting&quot;, x = &quot;Party % in the UK 2015 general election&quot;, y = &quot;Leave % in the 2016 Brexit referendum&quot;)+
+  scale_colour_manual(labels = c(&quot;Conservative&quot;, &quot;Labour&quot;,&quot;Lib Dems&quot;,&quot;UKIP&quot;), values = cols)+
+  theme_bw()+
+  theme(legend.position = &quot;bottom&quot;,plot.title = element_text(face = &quot;bold&quot;, size = 13))+
+  theme(legend.title = element_blank())+
+  NULL</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/challenge1_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="challenge-3gdp-components-over-time-and-among-countries" class="section level1">
+<h1>Challenge 3:GDP components over time and among countries</h1>
+<pre class="r"><code>UN_GDP_data  &lt;-  read_excel(here::here(&quot;data1&quot;, &quot;Download-GDPconstant-USD-countries.xls&quot;), # Excel filename
+                sheet=&quot;Download-GDPconstant-USD-countr&quot;, # Sheet name
+                skip=2) # Number of rows to skip</code></pre>
+<pre class="r"><code># Tidying data - Making data long and expressing all figures in billions
+tidy_GDP_data_1 &lt;- UN_GDP_data %&gt;%
+  pivot_longer(4:51, names_to = &quot;year&quot;, values_to = &quot;indicator_data&quot;) %&gt;%
+  mutate(indicator_data = indicator_data / 1000000000)</code></pre>
+<pre class="r"><code># Renaming indicators into shorter counterparts
+tidy_GDP_data_1 &lt;- tidy_GDP_data_1
+tidy_GDP_data_1$IndicatorName[tidy_GDP_data_1$IndicatorName == &quot;Exports of goods and services&quot;] &lt;-  &quot;Exports&quot;
+tidy_GDP_data_1$IndicatorName[tidy_GDP_data_1$IndicatorName == &quot;General government final consumption expenditure&quot;] &lt;-  &quot;Government expenditure&quot; 
+tidy_GDP_data_1$IndicatorName[tidy_GDP_data_1$IndicatorName == &quot;Household consumption expenditure (including Non-profit institutions serving households)&quot;] &lt;-  &quot;Household expenditure&quot; 
+tidy_GDP_data_1$IndicatorName[tidy_GDP_data_1$IndicatorName == &quot;Imports of goods and services&quot;] &lt;-  &quot;Imports&quot;
+
+glimpse(tidy_GDP_data_1)</code></pre>
+<pre><code>## Rows: 176,880
+## Columns: 5
+## $ CountryID      &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4…
+## $ Country        &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanist…
+## $ IndicatorName  &lt;chr&gt; &quot;Final consumption expenditure&quot;, &quot;Final consumption exp…
+## $ year           &lt;chr&gt; &quot;1970&quot;, &quot;1971&quot;, &quot;1972&quot;, &quot;1973&quot;, &quot;1974&quot;, &quot;1975&quot;, &quot;1976&quot;,…
+## $ indicator_data &lt;dbl&gt; 5.56, 5.33, 5.20, 5.75, 6.15, 6.32, 6.37, 6.90, 7.09, 6…</code></pre>
+<pre class="r"><code># Let us compare GDP components for these 3 countries
+country_list &lt;- c(&quot;United States&quot;,&quot;India&quot;, &quot;Germany&quot;)</code></pre>
+<pre class="r"><code># Required Indicators names for graph
+list_indicator_name = c(&quot;Gross capital formation&quot;,&quot;Exports&quot;, &quot;Government expenditure&quot;, &quot;Household expenditure&quot;, &quot;Imports&quot;)
+tidy_GDP_data_1 %&gt;%
+  filter(Country%in% country_list) %&gt;% #Filtering by aforementioned country_list
+  filter(IndicatorName %in% list_indicator_name ) %&gt;% #Filtering by list_indicator_name
+  group_by(IndicatorName) %&gt;%  
+  # Line plot for GDP over time graph
+  ggplot(aes(x = year, y = indicator_data, color = IndicatorName, group = IndicatorName)) +
+  geom_line(aes(x = year, y = indicator_data, color = IndicatorName)) +
+  facet_wrap(~ Country) +
+  theme_bw() +
+  theme(legend.position=&quot;right&quot;) + 
+   scale_x_discrete(breaks = seq(1970, 2017, 10)) +
+   scale_color_discrete(&quot;Components of GDP&quot;, breaks = c(&quot;Gross capital formation&quot;,&quot;Exports&quot;, &quot;Government expenditure&quot;, &quot;Household expenditure&quot;, &quot;Imports&quot;)) + 
+  labs(title = &quot;GDP Components over time&quot;, subtitle = &quot;In constant 2010 USD&quot;, x = &quot;&quot;, y = &quot;Billion US$&quot;) +
+  theme(plot.title = element_text(face=&quot;bold&quot;)) </code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/unnamed-chunk-14-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#converting to tidy wide format 
+tidy_GDP_data_2 &lt;- tidy_GDP_data_1%&gt;%
+  pivot_wider(
+    names_from = IndicatorName, 
+    values_from = indicator_data)
+glimpse(tidy_GDP_data_2)</code></pre>
+<pre><code>## Rows: 10,560
+## Columns: 20
+## $ CountryID                                                                            &lt;dbl&gt; …
+## $ Country                                                                              &lt;chr&gt; …
+## $ year                                                                                 &lt;chr&gt; …
+## $ `Final consumption expenditure`                                                      &lt;dbl&gt; …
+## $ `Household expenditure`                                                              &lt;dbl&gt; …
+## $ `Government expenditure`                                                             &lt;dbl&gt; …
+## $ `Gross capital formation`                                                            &lt;dbl&gt; …
+## $ `Gross fixed capital formation (including Acquisitions less disposals of valuables)` &lt;dbl&gt; …
+## $ Exports                                                                              &lt;dbl&gt; …
+## $ Imports                                                                              &lt;dbl&gt; …
+## $ `Gross Domestic Product (GDP)`                                                       &lt;dbl&gt; …
+## $ `Agriculture, hunting, forestry, fishing (ISIC A-B)`                                 &lt;dbl&gt; …
+## $ `Mining, Manufacturing, Utilities (ISIC C-E)`                                        &lt;dbl&gt; …
+## $ `Manufacturing (ISIC D)`                                                             &lt;dbl&gt; …
+## $ `Construction (ISIC F)`                                                              &lt;dbl&gt; …
+## $ `Wholesale, retail trade, restaurants and hotels (ISIC G-H)`                         &lt;dbl&gt; …
+## $ `Transport, storage and communication (ISIC I)`                                      &lt;dbl&gt; …
+## $ `Other Activities (ISIC J-P)`                                                        &lt;dbl&gt; …
+## $ `Total Value Added`                                                                  &lt;dbl&gt; …
+## $ `Changes in inventories`                                                             &lt;dbl&gt; …</code></pre>
+<pre class="r"><code># Using GDP formula to calculate GDP using GDP components - the sum of Household Expenditure (Consumption *C*), Gross Capital Formation (business investment *I*), Government Expenditure (G) and Net Exports (exports - imports)
+tidy_GDP_data_2 &lt;- tidy_GDP_data_2 %&gt;%
+  mutate(calculated_GDP = tidy_GDP_data_2$`Household expenditure`+ tidy_GDP_data_2$`Gross capital formation`+ tidy_GDP_data_2$`Government expenditure`+ tidy_GDP_data_2$`Exports`- tidy_GDP_data_2$`Imports`)
+#Calculating % difference between calculated GDP and UN_GDP_data GDP Figures
+tidy_GDP_data_2 &lt;- tidy_GDP_data_2 %&gt;%
+  mutate(percentage_difference_calculatedGDP_columnGDP = (((calculated_GDP / tidy_GDP_data_2$`Gross Domestic Product (GDP)`)-1) * 100))
+
+tidy_GDP_data_2</code></pre>
+<pre><code>## # A tibble: 10,560 × 22
+##    CountryID Country     year  `Final consumpt… `Household expe… `Government exp…
+##        &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1         4 Afghanistan 1970              5.56             5.07            0.372
+##  2         4 Afghanistan 1971              5.33             4.84            0.382
+##  3         4 Afghanistan 1972              5.20             4.70            0.402
+##  4         4 Afghanistan 1973              5.75             5.21            0.421
+##  5         4 Afghanistan 1974              6.15             5.59            0.431
+##  6         4 Afghanistan 1975              6.32             5.65            0.598
+##  7         4 Afghanistan 1976              6.37             5.68            0.627
+##  8         4 Afghanistan 1977              6.90             6.15            0.676
+##  9         4 Afghanistan 1978              7.09             6.30            0.725
+## 10         4 Afghanistan 1979              6.92             6.15            0.708
+## # … with 10,550 more rows, and 16 more variables:
+## #   Gross capital formation &lt;dbl&gt;,
+## #   Gross fixed capital formation (including Acquisitions less disposals of valuables) &lt;dbl&gt;,
+## #   Exports &lt;dbl&gt;, Imports &lt;dbl&gt;, Gross Domestic Product (GDP) &lt;dbl&gt;,
+## #   Agriculture, hunting, forestry, fishing (ISIC A-B) &lt;dbl&gt;,
+## #   Mining, Manufacturing, Utilities (ISIC C-E) &lt;dbl&gt;,
+## #   Manufacturing (ISIC D) &lt;dbl&gt;, Construction (ISIC F) &lt;dbl&gt;, …</code></pre>
+<pre class="r"><code># Plotting a graph, utilizing Percentage Difference of Calculated GDP and UN_GDP_data GDP Figures to compare this difference across Germany, India, and United States
+tidy_GDP_data_2 %&gt;%
+  filter(Country %in% country_list) %&gt;%
+  ggplot(aes(x=year, y=percentage_difference_calculatedGDP_columnGDP)) +
+  geom_line(group = 1, color = &quot;black&quot;, size = 0.2) + geom_line(group = 1,color = &quot;black&quot;,y=0, size = 0.2) +
+  facet_wrap(~ Country) +
+  theme_bw() +
+  scale_x_discrete(breaks = seq(1970, 2017, 10)) +
+  geom_ribbon(aes(ymin = 0, ymax = pmin(0, percentage_difference_calculatedGDP_columnGDP), group=1), alpha=0.2, fill = &quot;blue&quot;) +
+  geom_ribbon(aes(ymin = percentage_difference_calculatedGDP_columnGDP, ymax = pmin(0, percentage_difference_calculatedGDP_columnGDP), group=1), alpha=0.2, fill = &quot;yellow&quot;) +
+  labs(title = &quot;Percentage Difference of Calculated GDP and UN_GDP_data GDP Figures&quot;,
+       subtitle = &quot;Yellow: Calculated GDP &gt; UN_GDP_data GDP 
+Blue: Calculated GDP &lt; UN_GDP_data GDP&quot;,
+         x = &quot;Time period (1970-2017)&quot;, 
+         y = &quot;Percentage Difference&quot;, 
+        )+
+  NULL</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/unnamed-chunk-16-1.png" width="648" style="display: block; margin: auto;" /></p>
+<ul>
+<li><p>In the case of India, from the period of 1970 to 1990, the graph depicts a yellow region wherein calculated GDP is higher than the UN_GDP_data GDP figures. However, post 1990 (excluding 2007 and 2010), the graph depicts a blue region wherein calculated GDP is lower than the UN_GDP_data GDP figures. In 2007, the % difference between what you calculated as GDP and the GDP figure is 2.1309% and in 2010, the % difference between what you calculated as GDP and the GDP figure is 1.0660%</p></li>
+<li><p>In the case of Germany, the graph depicts a yellow region throughout from 1970 to 2017 wherein calculated GDP is higher than the UN_GDP_data GDP figures.The % difference between calculated GDP and the GDP figure was maximum in 1972 at 3.56e+00.
+In the United States, the graph depicts a mostly yellow region i.e.calculated GDP is higher than the UN_GDP_data GDP figures, excluding the time period from 2005-2008, 2010, and 2016-2017 which depicted a blue region i.e. calculated GDP is lower than the UN_GDP_data GDP figures.</p></li>
+</ul>
+<pre class="r"><code>country_list_1 &lt;- c(&quot;Austria&quot;,&quot;United Kingdom&quot;, &quot;Italy&quot;)
+list_indicator_name = c(&quot;Gross capital formation&quot;,&quot;Exports&quot;, &quot;Government expenditure&quot;, &quot;Household expenditure&quot;, &quot;Imports&quot;)
+tidy_GDP_data_1 %&gt;%
+  filter(Country%in% country_list_1) %&gt;% #Filtering by aforementioned country_list
+  filter(IndicatorName %in% list_indicator_name ) %&gt;% #Filtering by list_indicator_name
+  group_by(IndicatorName) %&gt;%  
+  # Line plot for GDP over time graph
+  ggplot(aes(x = year, y = indicator_data, color = IndicatorName, group = IndicatorName)) +
+  geom_line(aes(x = year, y = indicator_data, color = IndicatorName)) +
+  facet_wrap(~ Country) +
+  theme_bw() +
+  theme(legend.position=&quot;right&quot;) + 
+   scale_x_discrete(breaks = seq(1970, 2017, 10)) +
+   scale_color_discrete(&quot;Components of GDP&quot;, breaks = c(&quot;Gross capital formation&quot;,&quot;Exports&quot;, &quot;Government expenditure&quot;, &quot;Household expenditure&quot;, &quot;Imports&quot;)) + 
+  labs(title = &quot;GDP Components over time&quot;, subtitle = &quot;In constant 2010 USD&quot;, x = &quot;&quot;, y = &quot;Billion US$&quot;) +
+  theme(plot.title = element_text(face=&quot;bold&quot;))</code></pre>
+<p><img src="/liva/blog/post-3_files/figure-html/unnamed-chunk-17-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
